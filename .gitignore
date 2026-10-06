@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# knowledgeverse runtime database (user accounts, progress, certificates)
+# never commit real student records
+/data/
