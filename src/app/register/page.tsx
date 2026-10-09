@@ -49,9 +49,7 @@ function RegisterForm() {
           Your full name will appear on your certificates — enter it carefully.
         </p>
         <div className="mt-5">
-          <Suspense>
-            <GoogleButton text="Sign up with Google" />
-          </Suspense>
+          <GoogleButton text="Sign up with Google" />
         </div>
         <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
           <span className="h-px flex-1 bg-slate-200" /> or with email <span className="h-px flex-1 bg-slate-200" />

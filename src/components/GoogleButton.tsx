@@ -1,14 +1,18 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-
-// Shared "Continue with Google" button (OAuth). Preserves ?next= destination.
+// Shared "Continue with Google" button (OAuth). Reads ?next= at click time so
+// the button fully server-renders (no client-only bailout).
 export default function GoogleButton({ text = "Continue with Google" }: { text?: string }) {
-  const next = useSearchParams().get("next") || "/dashboard";
-  const href = `/api/auth/oauth/google?next=${encodeURIComponent(next)}`;
+  function go(e: React.MouseEvent) {
+    e.preventDefault();
+    const next =
+      new URLSearchParams(window.location.search).get("next") || "/dashboard";
+    window.location.href = `/api/auth/oauth/google?next=${encodeURIComponent(next)}`;
+  }
   return (
     <a
-      href={href}
+      href="/api/auth/oauth/google"
+      onClick={go}
       className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
     >
       <svg width="18" height="18" viewBox="0 0 48 48">

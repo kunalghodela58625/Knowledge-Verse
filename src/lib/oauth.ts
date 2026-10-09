@@ -19,10 +19,14 @@ export function googleConfigured(): boolean {
 }
 
 export function appOrigin(req: Request): string {
+  // KV_PUBLIC_URL wins when set (production custom domains).
   if (process.env.KV_PUBLIC_URL) return process.env.KV_PUBLIC_URL.replace(/\/$/, "");
-  const origin = req.headers.get("origin");
-  if (origin) return origin.replace(/\/$/, "");
-  return "http://localhost:3000";
+  // Top-level navigations don't send an Origin header, so derive from Host.
+  // Vercel (and most proxies) set x-forwarded-host / x-forwarded-proto.
+  const host =
+    req.headers.get("x-forwarded-host") || req.headers.get("host") || "localhost:3000";
+  const proto = req.headers.get("x-forwarded-proto") || "http";
+  return `${proto}://${host}`.replace(/\/$/, "");
 }
 
 function redirectUri(origin: string): string {

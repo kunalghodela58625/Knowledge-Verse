@@ -47,9 +47,7 @@ function LoginForm() {
         <h1 className="text-2xl font-bold text-slate-900">Welcome back</h1>
         <p className="mt-1 text-sm text-slate-500">Login to continue learning.</p>
         <div className="mt-5">
-          <Suspense>
-            <GoogleButton />
-          </Suspense>
+          <GoogleButton />
         </div>
         <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
           <span className="h-px flex-1 bg-slate-200" /> or with email <span className="h-px flex-1 bg-slate-200" />
