@@ -51,12 +51,45 @@ git push -u origin main
 | `KV_PUBLIC_URL` | `https://<your-project>.vercel.app` (after first deploy; see step 5) |
 | `KV_ADMIN_EMAIL` | (optional) admin email, default `admin@knowledgeverse.com` |
 | `KV_ADMIN_PASSWORD` | (optional) admin password, default `Admin123!` — **change this** |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID (see Step 3b below) |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret (see Step 3b below) |
 
 > Set each variable for **Production** (and Preview if you want previews to share the DB).
 > `MONGODB_URI` is what switches the app from local JSON files to MongoDB —
 > without it, logins on Vercel would silently "forget" users (ephemeral filesystem).
 
 4. Click **Deploy**
+
+## Step 3b — Enable "Continue with Google" (5 min)
+
+Students can sign up / log in with their Google account. You need a Google
+OAuth client (one-time setup, free):
+
+1. Go to https://console.cloud.google.com → create (or select) a project
+2. **APIs & Services → OAuth consent screen**:
+   - User type: **External** → Create
+   - Fill App name (`Knowledgeverse`), User support email, Developer contact email → Save
+   - Skip Scopes, then under **Test users** add your own Gmail address (required
+     while the app is in Testing mode) → Save
+3. **APIs & Services → Credentials → Create Credentials → OAuth client ID**:
+   - Application type: **Web application**, name `Knowledgeverse Web`
+   - Under **Authorized redirect URIs** add BOTH:
+     - `http://localhost:3000/api/auth/oauth/google/callback` (local testing)
+     - `https://<your-project>.vercel.app/api/auth/oauth/google/callback` (production; update after deploy/rename, and for any custom domain)
+   - Create → copy the **Client ID** and **Client Secret**
+4. Add them as Vercel environment variables: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+5. Locally, put the same two values in a `.env.local` file:
+   ```
+   GOOGLE_CLIENT_ID=xxxx.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=xxxx
+   ```
+6. When ready for the public, click **Publish App** on the OAuth consent screen
+   (otherwise only your Test users can sign in with Google).
+
+How it works: Google verifies the email address, so no OTP is needed — the
+student clicks "Continue with Google", approves, and the account is created
+(full name taken from the Google profile, which is then used on certificates)
+or matched to the existing account with the same email.
 
 ## Step 4 — Verify the deployment (5 min)
 

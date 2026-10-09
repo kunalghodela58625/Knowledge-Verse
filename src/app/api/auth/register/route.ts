@@ -3,6 +3,8 @@ import { db, uid } from "@/lib/db";
 import { hashPassword, validatePassword, isValidEmail, createSession, setSessionCookie, safeUser } from "@/lib/auth";
 import { ensureAdmin } from "@/lib/seed";
 
+// Direct registration (name + email + password). Google OAuth is available
+// separately via /api/auth/oauth/google.
 export async function POST(req: Request) {
   try {
     await ensureAdmin();
@@ -27,6 +29,7 @@ export async function POST(req: Request) {
       fullName,
       email,
       passwordHash: await hashPassword(password),
+      provider: "credentials" as const,
       role: "student" as const,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

@@ -47,13 +47,17 @@ Optional environment variables (create a `.env.local` file):
 | `MONGODB_URI`     | MongoDB connection string. When set, ALL records live in MongoDB (required on Vercel); when absent, local `data/*.json` files are used |
 | `KV_DB_NAME`        | Mongo database name (default `knowledgeverse`) |
 | `KV_PUBLIC_URL`     | Public base URL embedded in certificate QR codes (default: request origin) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth credentials for "Continue with Google" (setup: DEPLOY_VERCEL.md Step 3b). Without these, email+password sign-up/login still works |
 | `KV_ALLOW_HTTP=1`   | Allow login cookies over plain HTTP (needed for LAN/self-host without HTTPS; localhost and HTTPS deployments don't need it) |
 | `KV_ADMIN_EMAIL` / `KV_ADMIN_PASSWORD` | Override default admin credentials |
 
 ## 3. Accounts
 
 - **Admin (auto-created on first auth request):** `admin@knowledgeverse.com` / `Admin123!`
-- **Students:** self-register at `/register` (full name is stored and later printed on certificates).
+- **Students:** self-register at `/register` with name + email + password, or
+  one-click via **Continue with Google** (needs `GOOGLE_CLIENT_ID/SECRET`;
+  Google verifies the email, and the Google profile name is used on certificates).
+  The account's full name is stored and later printed on certificates.
 
 ## 4. Student journey (matches the required flow)
 

@@ -70,6 +70,7 @@ export async function POST(req: Request) {
         lessons: course.totalLessons,
         duration: course.duration,
       },
+      curriculum: course.modules.map((m) => m.title),
     };
     certs.push(cert);
     await db.saveCertificates(certs);

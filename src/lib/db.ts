@@ -83,7 +83,10 @@ export interface User {
   id: string;
   fullName: string;
   email: string;
+  // Empty for OAuth-only accounts (they sign in with Google, not a password).
   passwordHash: string;
+  // How the account signs in. Google users may later set a password too.
+  provider: "credentials" | "google";
   role: "student" | "admin";
   createdAt: string;
   updatedAt: string;
@@ -164,6 +167,8 @@ export interface Certificate {
   qrDataUrl: string;
   // Completion facts shown on the certificate (never performance data).
   courseStats: { modules: number; lessons: number; duration: string };
+  // Programme of study printed on the certificate.
+  curriculum: string[];
 }
 
 export interface PasswordReset {
