@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Alert, Field, inputCls } from "@/components/ui";
 import { useRedirectIfLoggedIn } from "@/components/GuestOnly";
-import GoogleButton from "@/components/GoogleButton";
 
 function RegisterForm() {
   const [form, setForm] = useState({ fullName: "", email: "", password: "", confirmPassword: "" });
@@ -48,13 +47,7 @@ function RegisterForm() {
         <p className="mt-1 text-sm text-slate-500">
           Your full name will appear on your certificates — enter it carefully.
         </p>
-        <div className="mt-5">
-          <GoogleButton text="Sign up with Google" />
-        </div>
-        <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
-          <span className="h-px flex-1 bg-slate-200" /> or with email <span className="h-px flex-1 bg-slate-200" />
-        </div>
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} className="mt-5 space-y-4">
           {error && <Alert kind="error">{error}</Alert>}
           <Field label="Full Name">
             <input className={inputCls} value={form.fullName} onChange={set("fullName")} placeholder="e.g. Rahul Sharma" required />

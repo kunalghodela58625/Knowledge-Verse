@@ -12,7 +12,6 @@ export async function ensureAdmin() {
     fullName: "Knowledgeverse Admin",
     email,
     passwordHash: await hashPassword(password),
-    provider: "credentials",
     role: "admin",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

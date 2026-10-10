@@ -11,6 +11,7 @@ export default function CertificatePage() {
   const [cert, setCert] = useState<CertData | null>(null);
   const [busy, setBusy] = useState(false);
   const [missing, setMissing] = useState(false);
+  const [dlError, setDlError] = useState("");
 
   useEffect(() => {
     fetch("/api/certificates", { cache: "no-store" })
@@ -45,8 +46,11 @@ export default function CertificatePage() {
           disabled={busy}
           onClick={async () => {
             setBusy(true);
+            setDlError("");
             try {
               await downloadCertificatePDF(cert);
+            } catch (e) {
+              setDlError(e instanceof Error ? e.message : "Could not generate the PDF. Please try again.");
             } finally {
               setBusy(false);
             }
@@ -59,6 +63,11 @@ export default function CertificatePage() {
           Verify Certificate
         </Link>
       </div>
+      {dlError && (
+        <div className="no-print mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {dlError}
+        </div>
+      )}
       <CertificateView cert={cert} />
       <p className="no-print mt-4 text-center text-xs text-slate-400">
         Certificate ID {cert.certificateId} · issued to {cert.studentName} · completion-based, no scores shown.

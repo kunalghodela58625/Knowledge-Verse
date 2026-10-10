@@ -14,11 +14,8 @@ export async function POST(req: Request) {
 
     const users = await db.users();
     const user = users.find((u) => u.email.toLowerCase() === email);
-    if (!user || !user.passwordHash || !(await verifyPassword(password, user.passwordHash))) {
-      if (user && !user.passwordHash)
-        return NextResponse.json({ error: "This account uses Continue with Google. Please sign in with Google." }, { status: 401 });
+    if (!user || !(await verifyPassword(password, user.passwordHash)))
       return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
-    }
 
     const token = await createSession(user);
     await setSessionCookie(token);

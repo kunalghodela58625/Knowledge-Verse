@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Alert, Field, inputCls } from "@/components/ui";
 import { useRedirectIfLoggedIn } from "@/components/GuestOnly";
-import GoogleButton from "@/components/GoogleButton";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -13,9 +12,7 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const router = useRouter();
-  const params = useSearchParams();
-  const next = params.get("next") || "/dashboard";
-  const oauthError = params.get("error") || "";
+  const next = useSearchParams().get("next") || "/dashboard";
   const checking = useRedirectIfLoggedIn(next);
 
   async function submit(e: React.FormEvent) {
@@ -46,14 +43,8 @@ function LoginForm() {
       <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">Welcome back</h1>
         <p className="mt-1 text-sm text-slate-500">Login to continue learning.</p>
-        <div className="mt-5">
-          <GoogleButton />
-        </div>
-        <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
-          <span className="h-px flex-1 bg-slate-200" /> or with email <span className="h-px flex-1 bg-slate-200" />
-        </div>
-        <form onSubmit={submit} className="space-y-4">
-          {(error || oauthError) && <Alert kind="error">{error || oauthError}</Alert>}
+        <form onSubmit={submit} className="mt-6 space-y-4">
+          {error && <Alert kind="error">{error}</Alert>}
           <Field label="Email Address">
             <input className={inputCls} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </Field>

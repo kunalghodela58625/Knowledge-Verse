@@ -18,13 +18,10 @@ export async function PUT(req: Request) {
       user.fullName = name;
     }
     if (body.newPassword) {
-      // OAuth-only accounts have no password yet, so they can set one directly.
-      if (user.passwordHash) {
-        const cur = String(body.currentPassword || "");
-        const { verifyPassword } = await import("@/lib/auth");
-        if (!(await verifyPassword(cur, user.passwordHash)))
-          return NextResponse.json({ error: "Current password is incorrect." }, { status: 400 });
-      }
+      const cur = String(body.currentPassword || "");
+      const { verifyPassword } = await import("@/lib/auth");
+      if (!(await verifyPassword(cur, user.passwordHash)))
+        return NextResponse.json({ error: "Current password is incorrect." }, { status: 400 });
       const err = validatePassword(String(body.newPassword));
       if (err) return NextResponse.json({ error: err }, { status: 400 });
       user.passwordHash = await hashPassword(String(body.newPassword));

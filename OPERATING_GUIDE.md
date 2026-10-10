@@ -47,17 +47,14 @@ Optional environment variables (create a `.env.local` file):
 | `MONGODB_URI`     | MongoDB connection string. When set, ALL records live in MongoDB (required on Vercel); when absent, local `data/*.json` files are used |
 | `KV_DB_NAME`        | Mongo database name (default `knowledgeverse`) |
 | `KV_PUBLIC_URL`     | Public base URL embedded in certificate QR codes (default: request origin) |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth credentials for "Continue with Google" (setup: DEPLOY_VERCEL.md Step 3b). Without these, email+password sign-up/login still works |
 | `KV_ALLOW_HTTP=1`   | Allow login cookies over plain HTTP (needed for LAN/self-host without HTTPS; localhost and HTTPS deployments don't need it) |
 | `KV_ADMIN_EMAIL` / `KV_ADMIN_PASSWORD` | Override default admin credentials |
 
 ## 3. Accounts
 
 - **Admin (auto-created on first auth request):** `admin@knowledgeverse.com` / `Admin123!`
-- **Students:** self-register at `/register` with name + email + password, or
-  one-click via **Continue with Google** (needs `GOOGLE_CLIENT_ID/SECRET`;
-  Google verifies the email, and the Google profile name is used on certificates).
-  The account's full name is stored and later printed on certificates.
+- **Students:** self-register at `/register` with full name, email and password.
+  The full name is stored and later printed on certificates.
 
 ## 4. Student journey (matches the required flow)
 
@@ -105,3 +102,21 @@ instantly appear in the catalog with enrollment, progress, and certificate suppo
 | `lightningcss … .node` missing build error | `npm install --no-save lightningcss-linux-x64-gnu` then copy the `.node` file into `node_modules/lightningcss/` |
 | Forgot password email never arrives | No SMTP is configured by design — the forgot-password page shows the reset link directly after submitting |
 | Reset test data | Stop the server and delete `data/*.json` |
+
+## 9. Certificate samples
+
+Every template change is snapshotted for review in `certificate-samples/`:
+
+- `software-engineering-sample.html` — open in a browser to review the artwork
+- `software-engineering-sample.pdf` — the exact download output (rendered with
+  headless Chromium, same pixels students receive)
+
+Regenerate both after any certificate change with:
+
+```bash
+npx tsx scripts/render-sample-pdf.ts
+```
+
+Signature artwork lives in `public/`:
+`signature.png` (provided master) → `signature-ink.png` (transparent version
+placed directly on the certificate, no background box).

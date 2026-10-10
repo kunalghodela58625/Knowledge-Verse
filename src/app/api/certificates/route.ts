@@ -1,14 +1,52 @@
 import { NextResponse } from "next/server";
-import { db, uid } from "@/lib/db";
+import { db, uid, type Certificate } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { getCourse, lessonIdsOf } from "@/lib/courses";
 import { newCertificateId, newVerificationToken, verificationUrl, makeQrDataUrl } from "@/lib/cert";
 
-// GET /api/certificates -> my certificates
-export async function GET() {
+// Self-heal: older certificate records (issued before stats/curriculum/QR
+// fields existed) are completed from current course data and saved back, so
+// the screen view and the PDF download can never render empty boxes or a
+// missing QR code.
+async function healCertificate(c: Certificate, origin: string): Promise<boolean> {
+  let changed = false;
+  const course = await getCourse(c.courseId);
+  if (course) {
+    if (!c.courseStats) {
+      c.courseStats = {
+        modules: course.totalModules,
+        lessons: course.totalLessons,
+        duration: course.duration,
+      };
+      changed = true;
+    }
+    if (!c.curriculum || c.curriculum.length === 0) {
+      c.curriculum = course.modules.map((m) => m.title);
+      changed = true;
+    }
+  }
+  if (!c.qrDataUrl) {
+    c.qrDataUrl = await makeQrDataUrl(verificationUrl(origin, c.certificateId));
+    changed = true;
+  }
+  return changed;
+}
+
+function requestOrigin(req: Request): string {
+  return process.env.KV_PUBLIC_URL || req.headers.get("origin") || "http://localhost:3000";
+}
+
+// GET /api/certificates -> my certificates (healed + saved back if needed)
+export async function GET(req: Request) {
   const me = await getCurrentUser();
   if (!me) return NextResponse.json({ error: "Please login first." }, { status: 401 });
   const certs = await db.certificates();
+  const origin = requestOrigin(req);
+  let changed = false;
+  for (const c of certs) {
+    if (c.userId === me.id && (await healCertificate(c, origin))) changed = true;
+  }
+  if (changed) await db.saveCertificates(certs);
   return NextResponse.json({ certificates: certs.filter((c) => c.userId === me.id) });
 }
 
